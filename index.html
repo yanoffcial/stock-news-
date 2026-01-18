@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketNews Pro - Portal Berita Saham & Analisis AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --gold-color: #f39c12;
+            --text-light: #ecf0f1;
+            --text-dark: #2c3e50;
+            --border-color: #34495e;
+            --bg-dark: #0f0f0f;
+            --bg-card: #ffffff;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --ai-purple: #667eea;
+            --ai-blue: #764ba2;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--gold-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--gold-color);
+        }
+
+        .notification-toggle {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .notification-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-btn.active {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .ai-analysis-btn {
+            background: linear-gradient(45deg, var(--ai-purple), var(--ai-blue));
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-analysis-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+            background: linear-gradient(45deg, var(--ai-purple), var(--ai-blue));
+            border-radius: 8px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* AI Analysis Modal */
+        .ai-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            overflow-y: auto;
+        }
+
+        .ai-modal.active {
+            display: block;
+        }
+
+        .ai-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .ai-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .ai-title {
+            font-size: 36px;
+            background: linear-gradient(45deg, var(--ai-purple), var(--ai-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .ai-subtitle {
+            color: var(--text-light);
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        .close-ai {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-ai:hover {
+            transform: rotate(90deg);
+        }
+
+        /* API Configuration Section */
+        .api-config {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--ai-purple);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--ai-purple), var(--ai-blue));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Market Ticker */
+        .market-ticker {
+            background: var(--bg-dark);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            top: 70px;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            animation: scroll 30s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 30px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .ticker-symbol {
+            font-weight: bold;
+            color: var(--gold-color);
+        }
+
+        .ticker-price {
+            color: var(--success);
+            margin-left: 5px;
+        }
+
+        .ticker-price.down {
+            color: var(--danger);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 120px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 20px;
+        }
+
+        /* News Grid with Real Images */
+        .news-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .main-news {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .side-news {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* News Cards with Images */
+        .news-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .news-card.featured {
+            grid-column: 1 / -1;
+        }
+
+        .news-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover .news-image img {
+            transform: scale(1.05);
+        }
+
+        .news-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .news-card.featured .news-title {
+            font-size: 28px;
+        }
+
+        .news-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .news-summary {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        /* AI Analysis Interface */
+        .ai-analysis-interface {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: white;
+            border-bottom-color: var(--ai-purple);
+        }
+
+        .analysis-content {
+            display: none;
+        }
+
+        .analysis-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--ai-purple);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: var(--ai-purple);
+            margin-bottom: 20px;
+        }
+
+        .chat-interface {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .chat-message.user {
+            background: linear-gradient(45deg, var(--ai-purple), var(--ai-blue));
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-message.ai {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Notification Settings Modal */
+        .notification-settings {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 10000;
+            display: none;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .notification-settings.active {
+            display: block;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .settings-title {
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close-settings {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+
+        .setting-label {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: #ccc;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--success);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(25px);
+        }
+
+        /* Infinite Scroll Section */
+        .infinite-container {
+            margin-top: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gold-color);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-light);
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Loading Animation */
+        .loading-container {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--gold-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 0 15px;
+            }
+
+            .ai-container {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--gold-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            background: #f1c40f;
+            transform: translateY(-3px);
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        /* Breaking News Alert */
+        .breaking-news {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: linear-gradient(45deg, var(--danger), #c0392b);
+            color: white;
+            padding: 15px 20px;
+            z-index: 998;
+            display: none;
+            animation: slideDown 0.5s ease;
+        }
+
+        .breaking-news.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .breaking-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .breaking-label {
+            background: white;
+            color: var(--danger);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-chart-line"></i>
+                MarketNews Pro
+            </a>
+            
+            <nav class="nav-menu" id="navMenu">
+                <a href="#" data-section="beranda">Beranda</a>
+                <a href="#" data-section="saham">Saham</a>
+                <a href="#" data-section="pasar">Pasar Global</a>
+                <a href="#" data-section="analisis" class="ai-analysis-btn" id="aiAnalysisBtn">
+                    <i class="fas fa-brain"></i>
+                    Analisis AI
+                </a>
+                <div class="notification-toggle">
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        Notifikasi
+                    </button>
+                </div>
+            </nav>
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breaking News Alert -->
+    <div class="breaking-news" id="breakingNews">
+        <div class="breaking-content">
+            <div class="breaking-label">Breaking</div>
+            <div id="breakingText">IHSG Menguat 2.1% - Aksi Beli Massif di Sektor Perbankan</div>
+        </div>
+    </div>
+
+    <!-- AI Analysis Modal -->
+    <div class="ai-modal" id="aiModal">
+        <div class="ai-container">
+            <button class="close-ai" id="closeAI">✕</button>
+            
+            <div class="ai-header">
+                <h1 class="ai-title">
+                    <i class="fas fa-robot"></i>
+                    Analisis AI Cerdas
+                </h1>
+                <p class="ai-subtitle">Gunakan kecerdasan buatan untuk analisis saham, berita, dan data pasar</p>
+            </div>
+
+            <!-- API Configuration -->
+            <div class="api-config" id="apiConfig">
+                <h3 style="color: white; margin-bottom: 20px;">
+                    <i class="fas fa-key"></i> Konfigurasi API
+                </h3>
+                <div class="config-grid">
+                    <div class="form-group">
+                        <label for="aiProvider">Provider AI:</label>
+                        <select id="aiProvider">
+                            <option value="openai">OpenAI GPT-4</option>
+                            <option value="gemini">Google Gemini Pro</option>
+                            <option value="deepseek">DeepSeek V3</option>
+                            <option value="claude">Anthropic Claude</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="aiApiKey">API Key:</label>
+                        <input type="password" id="aiApiKey" placeholder="Masukkan API key Anda">
+                    </div>
+                    <div class="form-group">
+                        <label for="stockApiProvider">Stock Data Provider:</label>
+                        <select id="stockApiProvider">
+                            <option value="alphavantage">Alpha Vantage</option>
+                            <option value="yahoo">Yahoo Finance</option>
+                            <option value="iex">IEX Cloud</option>
+                            <option value="polygon">Polygon.io</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="stockApiKey">Stock API Key:</label>
+                        <input type="password" id="stockApiKey" placeholder="Stock API key">
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="saveApiConfig">
+                        <i class="fas fa-save"></i> Simpan & Test Koneksi
+                    </button>
+                    <button class="btn btn-secondary" id="skipConfig">
+                        <i class="fas fa-forward"></i> Gunakan Demo Mode
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Analysis Interface -->
+            <div class="ai-analysis-interface" id="aiAnalysisInterface" style="display: none;">
+                <div class="analysis-tabs">
+                    <button class="tab-btn active" data-tab="photo">
+                        <i class="fas fa-camera"></i> Analisis Foto
+                    </button>
+                    <button class="tab-btn" data-tab="chat">
+                        <i class="fas fa-comments"></i> Konsultasi AI
+                    </button>
+                    <button class="tab-btn" data-tab="news">
+                        <i class="fas fa-newspaper"></i> Analisis Berita
+                    </button>
+                    <button class="tab-btn" data-tab="data">
+                        <i class="fas fa-chart-line"></i> Analisis Data
+                    </button>
+                </div>
+
+                <div class="analysis-content active" id="photo">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3 style="color: white; margin: 10px 0;">Upload Foto/Screenshot Saham</h3>
+                        <p style="color: rgba(255,255,255,0.7);">Drag & drop atau klik untuk memilih file</p>
+                        <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                    </div>
+                    <div id="photoResult"></div>
+                </div>
+
+                <div class="analysis-content" id="chat">
+                    <div class="chat-interface" id="chatInterface">
+                        <div class="chat-message ai">
+                            <strong>AI Assistant:</strong> Halo! Saya siap membantu Anda menganalisis saham dan pasar. Silakan tanya apa saja tentang investasi, analisis fundamental, teknikal, atau strategi trading.
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Tanya tentang saham...">
+                        <button class="btn btn-primary" id="sendChat">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="analysis-content" id="news">
+                    <div class="form-group">
+                        <label for="newsUrl">URL Berita atau Judul Berita:</label>
+                        <input type="text" id="newsUrl" placeholder="Masukkan URL atau judul berita yang ingin dianalisis">
+                    </div>
+                    <button class="btn btn-primary" id="analyzeNews">
+                        <i class="fas fa-search"></i> Analisis Berita
+                    </button>
+                    <div id="newsAnalysisResult"></div>
+                </div>
+
+                <div class="analysis-content" id="data">
+                    <div class="form-group">
+                        <label for="stockSymbol">Simbol Saham:</label>
+                        <input type="text" id="stockSymbol" placeholder="Contoh: AAPL, TLKM, BBCA">
+                    </div>
+                    <div class="form-group">
+                        <label for="analysisType">Tipe Analisis:</label>
+                        <select id="analysisType">
+                            <option value="fundamental">Fundamental Analysis</option>
+                            <option value="technical">Technical Analysis</option>
+                            <option value="sentiment">Sentiment Analysis</option>
+                            <option value="comprehensive">Comprehensive Analysis</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="analyzeData">
+                        <i class="fas fa-chart-bar"></i> Analisis Data
+                    </button>
+                    <div id="dataAnalysisResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Settings Modal -->
+    <div class="notification-settings" id="notificationSettings">
+        <div class="settings-header">
+            <h3 class="settings-title">Pengaturan Notifikasi</h3>
+            <button class="close-settings" id="closeSettings">✕</button>
+        </div>
+        <div class="setting-item">
+            <span class="setting-label">Notifikasi Berita Baru</span>
+            <div class="toggle-switch" id="newsNotification"></div>
+        </div>
+        <div class="setting-item">
+            <span class="setting-label">Breaking News Alert</span>
+            <div class="toggle-switch" id="breakingNotification"></div>
+        </div>
+        <div class="setting-item">
+            <span class="setting-label">Update Pasar Real-time</span>
+            <div class="toggle-switch" id="marketNotification"></div>
+        </div>
+        <div class="setting-item">
+            <span class="setting-label">Analisis AI Selesai</span>
+            <div class="toggle-switch" id="aiNotification"></div>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+            <button class="btn btn-primary" id="saveNotificationSettings">Simpan Pengaturan</button>
+        </div>
+    </div>
+
+    <!-- Market Ticker -->
+    <div class="market-ticker">
+        <div class="ticker-content" id="tickerContent">
+            <!-- Ticker items will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Update Pasar Real-Time</h1>
+                <p class="hero-subtitle">Berita keuangan, analisis pasar, dan data saham terkini dari seluruh dunia</p>
+            </div>
+        </section>
+
+        <!-- News Grid with Real Images -->
+        <div class="news-grid">
+            <div class="main-news" id="mainNews">
+                <!-- Main news articles will be populated here -->
+            </div>
+            
+            <div class="side-news">
+                <div class="market-widget">
+                    <h3 class="widget-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Indeks Global
+                    </h3>
+                    <div id="marketIndices">
+                        <!-- Market data will be populated here -->
+                    </div>
+                </div>
+                <div id="sideNews">
+                    <!-- Side news articles -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Infinite Scroll Section -->
+        <section class="infinite-container">
+            <div class="section-header">
+                <h2 class="section-title">Berita Terkini</h2>
+                <a href="#" class="section-more">Lihat Semua →</a>
+            </div>
+            
+            <div class="news-list" id="newsList">
+                <!-- Infinite scroll news will be populated here -->
+            </div>
+            
+            <div class="loading-container" id="loadingContainer">
+                <div class="loading-spinner"></div>
+                <p>Memuat berita lainnya...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        // State Management
+        let currentSection = 'beranda';
+        let newsPage = 1;
+        let isLoading = false;
+        let allNews = [];
+        let marketData = [];
+        let apiConfig = {
+            connected: false,
+            provider: 'openai',
+            apiKey: '',
+            stockApiProvider: 'alphavantage',
+            stockApiKey: ''
+        };
+
+        let notificationSettings = {
+            news: true,
+            breaking: true,
+            market: true,
+            ai: true
+        };
+
+        // Real news images from Unsplash/Placeholder
+        const newsImages = {
+            'PASAR SAHAM': 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&h=600&fit=crop',
+            'KEBIJAKAN': 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=800&h=600&fit=crop',
+            'KRIPTO': 'https://images.unsplash.com/photo-1639762681485-074b7f938dad?w=800&h=600&fit=crop',
+            'PROPERTI': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop',
+            'KOMODITAS': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop',
+            'TEKNOLOGI': 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=600&fit=crop',
+            'BANKING': 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop'
+        };
+
+        // Sample news data
+        const sampleNews = [
+            {
+                id: 1,
+                title: "IHSG Menguat 1.2% Dipicu Aksi Beli Investor Asing",
+                summary: "Indeks Harga Saham Gabungan (IHSG) ditutup menguat 1.2% pada perdagangan Selasa, didorong oleh aksi beli investor asing di sektor perbankan dan komoditas.",
+                category: "PASAR SAHAM",
+                author: "Andi Wijaya",
+                time: "2 jam lalu",
+                image: newsImages['PASAR SAHAM'],
+                featured: true
+            },
+            {
+                id: 2,
+                title: "Bank Indonesia Pertahankan Suku Bunga Acuan 6%",
+                summary: "Bank Indonesia memutuskan untuk mempertahankan suku bunga acuan BI Rate pada level 6% dalam rapat dewan gubernur bulan ini.",
+                category: "KEBIJAKAN",
+                author: "Siti Nurhaliza",
+                time: "4 jam lalu",
+                image: newsImages['KEBIJAKAN'],
+                featured: false
+            },
+            {
+                id: 3,
+                title: "Bitcoin Melejit ke $45,000, Sentimen Pasar Kripto Positif",
+                summary: "Harga Bitcoin melonjak 8% dalam 24 jam terakhir ke level $45,000, didorong oleh ekspektasi ETF spot Bitcoin dan sentimen pasar yang membaik.",
+                category: "KRIPTO",
+                author: "Budi Santoso",
+                time: "5 jam lalu",
+                image: newsImages['KRIPTO'],
+                featured: false
+            }
+        ];
+
+        // Market data
+        const marketIndices = [
+            { name: "IHSG", value: "7,234.56", change: "+1.2%", up: true },
+            { name: "Nikkei 225", value: "32,456.78", change: "+0.8%", up: true },
+            { name: "S&P 500", value: "4,567.89", change: "-0.3%", up: false },
+            { name: "FTSE 100", value: "7,654.32", change: "+0.5%", up: true },
+            { name: "Hang Seng", value: "18,234.56", change: "-1.1%", up: false }
+        ];
+
+        const tickerData = [
+            { symbol: "BBCA", price: "3,450", change: "+2.1%", up: true },
+            { symbol: "BBRI", price: "4,320", change: "+1.8%", up: true },
+            { symbol: "TLKM", price: "3,890", change: "-0.5%", up: false },
+            { symbol: "ASII", price: "5,670", change: "+3.2%", up: true },
+            { symbol: "UNVR", price: "12,300", change: "-1.2%", up: false }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            setupEventListeners();
+            startMarketTicker();
+            loadInitialNews();
+            setupInfiniteScroll();
+            loadNotificationSettings();
+            startNotificationSystem();
+        });
+
+        function initializePage() {
+            updateMarketIndices();
+            updateMarketTicker();
+        }
+
+        function setupEventListeners() {
+            // Hamburger menu - direct to AI Analysis
+            const hamburger = document.getElementById('hamburger');
+            const aiModal = document.getElementById('aiModal');
+            const closeAI = document.getElementById('closeAI');
+            const aiAnalysisBtn = document.getElementById('aiAnalysisBtn');
+
+            hamburger.addEventListener('click', function() {
+                aiModal.classList.add('active');
+            });
+
+            aiAnalysisBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                aiModal.classList.add('active');
+            });
+
+            closeAI.addEventListener('click', function() {
+                aiModal.classList.remove('active');
+            });
+
+            // Notification settings
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationSettings = document.getElementById('notificationSettings');
+            const closeSettings = document.getElementById('closeSettings');
+
+            notificationBtn.addEventListener('click', function() {
+                notificationSettings.classList.add('active');
+            });
+
+            closeSettings.addEventListener('click', function() {
+                notificationSettings.classList.remove('active');
+            });
+
+            // AI Modal tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tab = this.getAttribute('data-tab');
+                    switchTab(tab);
+                });
+            });
+
+            // API Configuration
+            document.getElementById('saveApiConfig').addEventListener('click', saveApiConfig);
+            document.getElementById('skipConfig').addEventListener('click', skipConfig);
+
+            // File upload
+            const uploadArea = document.getElementById('uploadArea');
+            const photoInput = document.getElementById('photoInput');
+
+            uploadArea.addEventListener('click', function() {
+                photoInput.click();
+            });
+
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'var(--ai-purple)';
+                this.style.background = 'rgba(102, 126, 234, 0.1)';
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                this.style.background = 'transparent';
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                this.style.background = 'transparent';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handlePhotoUpload(files[0]);
+                }
+            });
+
+            photoInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    handlePhotoUpload(e.target.files[0]);
+                }
+            });
+
+            // Chat functionality
+            document.getElementById('sendChat').addEventListener('click', sendChat);
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendChat();
+            });
+
+            // Analysis buttons
+            document.getElementById('analyzeNews').addEventListener('click', analyzeNews);
+            document.getElementById('analyzeData').addEventListener('click', analyzeData);
+
+            // Notification settings toggles
+            document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+
+            document.getElementById('saveNotificationSettings').addEventListener('click', saveNotificationSettings);
+
+            // Scroll to top button
+            const scrollTop = document.getElementById('scrollTop');
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollTop.classList.add('visible');
+                } else {
+                    scrollTop.classList.remove('visible');
+                }
+            });
+
+            scrollTop.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        function loadNotificationSettings() {
+            const saved = localStorage.getItem('notificationSettings');
+            if (saved) {
+                notificationSettings = JSON.parse(saved);
+            }
+            
+            // Update toggle states
+            Object.keys(notificationSettings).forEach(key => {
+                const toggle = document.getElementById(key + 'Notification');
+                if (toggle) {
+                    if (notificationSettings[key]) {
+                        toggle.classList.add('active');
+                    }
+                }
+            });
+            
+            // Update notification button state
+            const notificationBtn = document.getElementById('notificationBtn');
+            const hasActive = Object.values(notificationSettings).some(v => v);
+            if (hasActive) {
+                notificationBtn.classList.add('active');
+            }
+        }
+
+        function saveNotificationSettings() {
+            notificationSettings.news = document.getElementById('newsNotification').classList.contains('active');
+            notificationSettings.breaking = document.getElementById('breakingNotification').classList.contains('active');
+            notificationSettings.market = document.getElementById('marketNotification').classList.contains('active');
+            notificationSettings.ai = document.getElementById('aiNotification').classList.contains('active');
+
+            localStorage.setItem('notificationSettings', JSON.stringify(notificationSettings));
+            
+            // Update button state
+            const notificationBtn = document.getElementById('notificationBtn');
+            const hasActive = Object.values(notificationSettings).some(v => v);
+            if (hasActive) {
+                notificationBtn.classList.add('active');
+            } else {
+                notificationBtn.classList.remove('active');
+            }
+
+            document.getElementById('notificationSettings').classList.remove('active');
+            showNotification('Pengaturan notifikasi disimpan!', 'success');
+        }
+
+        function switchTab(tab) {
+            // Update active tab button
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+            // Update active content
+            document.querySelectorAll('.analysis-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tab).classList.add('active');
+        }
+
+        function saveApiConfig() {
+            const provider = document.getElementById('aiProvider').value;
+            const apiKey = document.getElementById('aiApiKey').value;
+            const stockProvider = document.getElementById('stockApiProvider').value;
+            const stockApiKey = document.getElementById('stockApiKey').value;
+
+            if (!apiKey) {
+                showNotification('Silakan masukkan API key!', 'error');
+                return;
+            }
+
+            apiConfig.provider = provider;
+            apiConfig.apiKey = apiKey;
+            apiConfig.stockApiProvider = stockProvider;
+            apiConfig.stockApiKey = stockApiKey;
+            apiConfig.connected = true;
+
+            localStorage.setItem('aiStockConfig', JSON.stringify(apiConfig));
+
+            showNotification('API berhasil disimpan! Menguji koneksi...', 'success');
+            
+            setTimeout(() => {
+                document.getElementById('apiConfig').style.display = 'none';
+                document.getElementById('aiAnalysisInterface').style.display = 'block';
+                showNotification('Koneksi berhasil! Anda dapat mulai menggunakan AI.', 'success');
+            }, 2000);
+        }
+
+        function skipConfig() {
+            document.getElementById('apiConfig').style.display = 'none';
+            document.getElementById('aiAnalysisInterface').style.display = 'block';
+            apiConfig.connected = true;
+            showNotification('Menggunakan demo mode. Beberapa fitur mungkin terbatas.', 'success');
+        }
+
+        function handlePhotoUpload(file) {
+            if (!apiConfig.connected) {
+                showNotification('Silakan konfigurasi API terlebih dahulu!', 'error');
+                return;
+            }
+
+            const resultDiv = document.getElementById('photoResult');
+            resultDiv.innerHTML = '<div class="loading-container" style="display: block;"><div class="loading-spinner"></div><p>Menganalisis foto dengan AI...</p></div>';
+
+            // Simulate AI analysis
+            setTimeout(() => {
+                const analysis = `🔍 **HASIL ANALISIS AI FOTO SAHAM:**
+
+📊 **Fundamental Analysis:**
+- P/E Ratio: 18.5 (Sedang)
+- ROE: 22.3% (Excellent)
+- Debt-to-Equity: 0.25 (Low risk)
+- Revenue Growth: +15% YoY (Strong)
+
+📈 **Technical Indicators:**
+- RSI (14): 58 (Neutral)
+- MACD: Bullish crossover terdeteksi
+- Support Level: Rp3,450
+- Resistance Level: Rp3,800
+
+💡 **Rekomendasi AI:**
+**BUY** - Saham ini menunjukkan potensi kenaikan berdasarkan:
+1. Fundamental kuat
+2. Teknikal bullish crossover
+3. Volume meningkat 45%
+
+🎯 **Target Price:** Rp3,750 (9.2% upside potential)
+⚠️ **Stop Loss:** Rp3,200
+
+**Analisis Risiko:** Risiko rendah-menengah, sesuaikan dengan profil risiko Anda.`;
+
+                resultDiv.innerHTML = `<div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; color: white; line-height: 1.6; white-space: pre-line;">${analysis}</div>`;
+            }, 3000);
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const chatInterface = document.getElementById('chatInterface');
+            const message = input.value.trim();
+
+            if (!message) return;
+            if (!apiConfig.connected) {
+                showNotification('Silakan konfigurasi API terlebih dahulu!', 'error');
+                return;
+            }
+
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.innerHTML = `<strong>Anda:</strong> ${message}`;
+            chatInterface.appendChild(userMsg);
+
+            // Add AI thinking message
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'chat-message ai';
+            aiMsg.innerHTML = `<strong>AI Assistant:</strong> <div class="loading"></div> Sedang memproses...`;
+            chatInterface.appendChild(aiMsg);
+
+            chatInterface.scrollTop = chatInterface.scrollHeight;
+            input.value = '';
+
+            // Simulate AI response
+            setTimeout(() => {
+                const responses = {
+                    'rekomendasi saham': `🚀 **TOP RECOMMENDATIONS:**
+
+1. **BBCA** (Bank BCA)
+   - Target: Rp4,200 (+15% upside)
+   - Alasan: Fundamental kuat, digital banking growth
+   - Risiko: Rendah
+
+2. **TLKM** (Telkom Indonesia)  
+   - Target: Rp4,500 (+12% upside)
+   - Alasan: 5G expansion, digital business
+   - Risiko: Sedang
+
+3. **UNVR** (Unilever Indonesia)
+   - Target: Rp13,800 (+8% upside)
+   - Alasan: Consumer staples, dividend yield
+   - Risiko: Rendah
+
+💡 **Strategi:** Gunakan dollar cost averaging untuk entry.`,
+                    
+                    'analisis teknikal': `📊 **TECHNICAL ANALYSIS UPDATE:**
+
+🔥 **BUY SIGNALS:**
+- RSI oversold (32) di BBCA
+- Golden cross terbentuk di ASII
+- Volume breakout di TLKM
+
+⚠️ **SELL SIGNALS:**
+- RSI overbought (78) di UNVR
+- Death cross di BBRI
+- Volume menurun di HMSP
+
+📈 **KEY LEVELS:**
+- IHSG Support: 7,150
+- IHSG Resistance: 7,400
+- Favorit sektor: Banking & Tech`
+
+                };
+
+                let response = responses.default || `Saya menganalisis pertanyaan Anda tentang "${message}". Berdasarkan data pasar terkini dan analisis teknikal, berikut insight yang bisa saya berikan:
+
+✅ **Key Points:**
+- Monitor support/resistance levels
+- Perhatikan volume trading
+- Gunakan stop loss untuk manajemen risiko
+
+📚 **Topik yang bisa saya bantu:**
+- Analisis fundamental saham
+- Strategi trading harian/mingguan
+- Manajemen portofolio
+- Analisis teknikal & indikator
+
+Apa yang ingin Anda ketahui lebih lanjut?`;
+                
+                for (let key in responses) {
+                    if (message.toLowerCase().includes(key) && key !== 'default') {
+                        response = responses[key];
+                        break;
+                    }
+                }
+
+                aiMsg.innerHTML = `<strong>AI Assistant:</strong> ${response}`;
+                chatInterface.scrollTop = chatInterface.scrollHeight;
+            }, 2000);
+        }
+
+        function analyzeNews() {
+            const newsUrl = document.getElementById('newsUrl').value;
+            const resultDiv = document.getElementById('newsAnalysisResult');
+
+            if (!newsUrl) {
+                showNotification('Silakan masukkan URL atau judul berita!', 'error');
+                return;
+            }
+
+            if (!apiConfig.connected) {
+                showNotification('Silakan konfigurasi API terlebih dahulu!', 'error');
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="loading-container" style="display: block;"><div class="loading-spinner"></div><p>Menganalisis berita dengan AI...</p></div>';
+
+            // Simulate AI news analysis
+            setTimeout(() => {
+                const analysis = `📰 **HASIL ANALISIS BERITA AI:**
+
+🎯 **Impact Analysis:**
+- **Sentimen:** Positif terhadap sektor perbankan
+- **Signifikansi:** Tinggi (menggerakkan IHSG +1.2%)
+- **Durasi Impact:** Jangka pendek hingga menengah
+
+💡 **Key Insights:**
+1. Berita ini mendukung sektor keuangan
+2. Potensi kenaikan saham bank besar 3-5%
+3. Reversal signal dari tren sebelumnya
+
+📊 **Trading Signal:**
+- **Entry Point:** Buka posisi buy pada pullback
+- **Target:** 3-5% dalam 1-2 hari
+- **Stop Loss:** 2% dari entry point
+
+⚠️ **Risk Warning:** Analisis berdasarkan AI, pertimbangkan faktor lainnya.`;
+
+                resultDiv.innerHTML = `<div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; color: white; line-height: 1.6; white-space: pre-line;">${analysis}</div>`;
+            }, 3000);
+        }
+
+        function analyzeData() {
+            const symbol = document.getElementById('stockSymbol').value;
+            const analysisType = document.getElementById('analysisType').value;
+            const resultDiv = document.getElementById('dataAnalysisResult');
+
+            if (!symbol) {
+                showNotification('Silakan masukkan simbol saham!', 'error');
+                return;
+            }
+
+            if (!apiConfig.connected) {
+                showNotification('Silakan konfigurasi API terlebih dahulu!', 'error');
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="loading-container" style="display: block;"><div class="loading-spinner"></div><p>Menganalisis data saham dengan AI...</p></div>';
+
+            // Simulate AI data analysis
+            setTimeout(() => {
+                let analysis = '';
+
+                if (analysisType === 'fundamental') {
+                    analysis = `📊 **FUNDAMENTAL ANALYSIS ${symbol}:**
+
+🏦 **Financial Health:**
+- Revenue Growth: +18.5% YoY (Strong)
+- Profit Margin: 22.3% (Above industry avg)
+- ROE: 19.8% (Excellent)
+- Debt/Equity: 0.31 (Manageable)
+
+💰 **Valuation:**
+- P/E Ratio: 16.2x (Fair value)
+- P/B Ratio: 2.8x (Reasonable)
+- EV/EBITDA: 11.5x (Attractive)
+
+⭐ **Overall Score: 8.5/10**
+- Growth: 9/10
+- Profitability: 8/10
+- Financial Health: 8/10`;
+                } else if (analysisType === 'technical') {
+                    analysis = `📈 **TECHNICAL ANALYSIS ${symbol}:**
+
+🔍 **Key Indicators:**
+- RSI(14): 54.2 (Neutral)
+- MACD: Bullish crossover
+- Bollinger Bands: Near upper band
+- Volume: Above 20-day average
+
+📊 **Support/Resistance:**
+- Support 1: Rp3,450
+- Support 2: Rp3,200
+- Resistance 1: Rp3,800
+- Resistance 2: Rp4,100
+
+💡 **Signal: BUY**
+- Entry: Rp3,500-3,600
+- Target: Rp3,850
+- Stop Loss: Rp3,250`;
+                } else {
+                    analysis = `🤖 **COMPREHENSIVE ANALYSIS ${symbol}:**
+
+📊 **Multi-timeframe Analysis:**
+- Short-term: Bullish (RSI: 58)
+- Medium-term: Neutral (MACD flat)
+- Long-term: Bullish (Trend up)
+
+💰 **Fundamental vs Technical:**
+- Fundamental: Strong buy (8.2/10)
+- Technical: Buy signal
+- Sentimen: Positive
+
+🎯 **Recommendation: STRONG BUY**
+- Target 1: Rp3,850 (+8.5%)
+- Target 2: Rp4,100 (+15.2%)
+- Stop Loss: Rp3,200 (-10.1%)
+
+⚖️ **Risk/Reward Ratio: 1:2.1**`;
+                }
+
+                resultDiv.innerHTML = `<div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; color: white; line-height: 1.6; white-space: pre-line;">${analysis}</div>`;
+            }, 3000);
+        }
+
+        function updateMarketIndices() {
+            const container = document.getElementById('marketIndices');
+            container.innerHTML = '';
+            
+            marketIndices.forEach(index => {
+                const item = document.createElement('div');
+                item.className = 'market-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="market-name">${index.name}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="market-value">${index.value}</div>
+                        <div class="market-change ${index.up ? 'up' : 'down'}">${index.change}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateMarketTicker() {
+            const container = document.getElementById('tickerContent');
+            container.innerHTML = '';
+            
+            tickerData.forEach(stock => {
+                const item = document.createElement('div');
+                item.className = 'ticker-item';
+                item.innerHTML = `
+                    <span class="ticker-symbol">${stock.symbol}</span>
+                    <span class="ticker-price ${stock.up ? '' : 'down'}">${stock.price}</span>
+                    <span class="ticker-price ${stock.up ? '' : 'down'}">${stock.change}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function startMarketTicker() {
+            // Simulate real-time updates
+            setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * tickerData.length);
+                const stock = tickerData[randomIndex];
+                const priceChange = (Math.random() - 0.5) * 100;
+                const newPrice = (parseFloat(stock.price.replace(',', '')) + priceChange).toFixed(0);
+                const changePercent = (priceChange / parseFloat(stock.price.replace(',', '')) * 100).toFixed(1);
+                
+                stock.price = newPrice.toLocaleString();
+                stock.change = `${changePercent >= 0 ? '+' : ''}${changePercent}%`;
+                stock.up = changePercent >= 0;
+                
+                updateMarketTicker();
+            }, 5000);
+        }
+
+        function loadInitialNews() {
+            const mainNews = document.getElementById('mainNews');
+            const sideNews = document.getElementById('sideNews');
+            
+            // Featured news
+            const featuredNews = sampleNews.find(news => news.featured);
+            if (featuredNews) {
+                const featuredCard = createNewsCard(featuredNews, true);
+                mainNews.appendChild(featuredCard);
+            }
+            
+            // Regular main news
+            sampleNews.filter(news => !news.featured).slice(0, 2).forEach(news => {
+                const card = createNewsCard(news, false);
+                mainNews.appendChild(card);
+            });
+            
+            // Side news
+            sampleNews.filter(news => !news.featured).slice(2, 5).forEach(news => {
+                const card = createNewsCard(news, false);
+                sideNews.appendChild(card);
+            });
+            
+            // Load initial infinite scroll news
+            generateMoreNews(10);
+        }
+
+        function createNewsCard(news, isFeatured = false) {
+            const card = document.createElement('div');
+            card.className = `news-card ${isFeatured ? 'featured' : ''}`;
+            
+            card.innerHTML = `
+                <div class="news-image">
+                    <img src="${news.image}" alt="${news.title}" onerror="this.src='https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&h=600&fit=crop'">
+                    <div class="news-category">${news.category}</div>
+                </div>
+                <div class="news-content">
+                    <h3 class="news-title">${news.title}</h3>
+                    <div class="news-meta">
+                        <span><i class="fas fa-user"></i> ${news.author}</span>
+                        <span><i class="fas fa-clock"></i> ${news.time}</span>
+                    </div>
+                    <p class="news-summary">${news.summary}</p>
+                    <div class="news-footer">
+                        <div class="news-author">
+                            <i class="fas fa-newspaper"></i>
+                            <span>MarketNews Pro</span>
+                        </div>
+                        <div class="news-time">
+                            <i class="fas fa-share-alt"></i> Bagikan
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            card.addEventListener('click', function() {
+                openNewsDetail(news);
+            });
+            
+            return card;
+        }
+
+        function generateMoreNews(count) {
+            const newsList = document.getElementById('newsList');
+            
+            for (let i = 0; i < count; i++) {
+                const news = generateRandomNews();
+                const card = createNewsCard(news, false);
+                newsList.appendChild(card);
+            }
+        }
+
+        function generateRandomNews() {
+            const categories = Object.keys(newsImages);
+            const authors = ['Andi Wijaya', 'Siti Nurhaliza', 'Budi Santoso', 'Rina Marlina', 'Ahmad Fauzi', 'Dewi Lestari'];
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            
+            return {
+                id: Date.now() + Math.random(),
+                title: generateRandomTitle(),
+                summary: generateRandomSummary(),
+                category: category,
+                author: authors[Math.floor(Math.random() * authors.length)],
+                time: `${Math.floor(Math.random() * 12) + 1} jam lalu`,
+                image: newsImages[category],
+                featured: false
+            };
+        }
+
+        function generateRandomTitle() {
+            const titles = [
+                "Analisis: Potensi Kenaikan IHSG di Akhir Pekan",
+                "Bank Sentral Evaluasi Kebijakan Moneter",
+                "Sektor Teknologi Mulai Memanas",
+                "Investor Asing Kembali Masuk Pasar",
+                "Prospek Emas di Tengah Ketidakpastian Global",
+                "Pertumbuhan Ekonomi Kuartal Ini",
+                "Dampak Kebijakan Baru terhadap Pasar",
+                "Valuasi Saham-saham Favorit Investor"
+            ];
+            return titles[Math.floor(Math.random() * titles.length)];
+        }
+
+        function generateRandomSummary() {
+            const summaries = [
+                "Pasar modal Indonesia menunjukkan tren positif dengan didukung oleh berbagai faktor fundamental yang kuat.",
+                "Analis memprediksi potensi kenaangan pada sektor-sektor tertentu menjelang akhir tahun.",
+                "Berbagai faktor global dan domestik mempengaruhi pergerakan pasar saat ini.",
+                "Investor disarankan untuk tetap waspada terhadap volatilitas pasar yang mungkin terjadi.",
+                "Data ekonomi terbaru memberikan sinyal positif bagi prospek pasar ke depan."
+            ];
+            return summaries[Math.floor(Math.random() * summaries.length)];
+        }
+
+        function setupInfiniteScroll() {
+            window.addEventListener('scroll', function() {
+                if (isLoading) return;
+                
+                const scrollPosition = window.innerHeight + window.pageYOffset;
+                const threshold = document.body.offsetHeight - 500;
+                
+                if (scrollPosition >= threshold) {
+                    loadMoreNews();
+                }
+            });
+        }
+
+        function loadMoreNews() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            document.getElementById('loadingContainer').style.display = 'block';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                generateMoreNews(8);
+                isLoading = false;
+                document.getElementById('loadingContainer').style.display = 'none';
+            }, 1500);
+        }
+
+        function openNewsDetail(news) {
+            const detailHtml = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; overflow-y: auto; padding: 50px 20px;">
+                    <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 15px; padding: 40px; position: relative;">
+                        <button onclick="closeDetail()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: #333;">✕</button>
+                        <div class="news-category" style="display: inline-block; margin-bottom: 20px; background: var(--accent-color); color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">${news.category}</div>
+                        <h1 style="color: #333; margin-bottom: 20px; font-size: 28px;">${news.title}</h1>
+                        <div class="news-meta" style="margin-bottom: 30px; color: #666;">
+                            <span><i class="fas fa-user"></i> ${news.author}</span>
+                            <span><i class="fas fa-clock"></i> ${news.time}</span>
+                        </div>
+                        <img src="${news.image}" alt="${news.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
+                        <div style="line-height: 1.8; color: #555; font-size: 16px;">
+                            <p>${news.summary}</p>
+                            <p style="margin-top: 20px;">Artikel lengkap akan tersedia dengan analisis mendalam dari tim editor kami. Konten ini mencakup berbagai aspek terkait topik yang sedang dibahas, termasuk implikasi terhadap pasar dan rekomendasi untuk investor.</p>
+                            <p style="margin-top: 20px;">Tetap ikuti update terbaru dari MarketNews Pro untuk informasi pasar modal Indonesia dan global yang paling update dan terpercaya.</p>
+                        </div>
+                        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 15px;">
+                                <button class="btn btn-primary" onclick="analyzeWithAI('${news.title}')">
+                                    <i class="fas fa-brain"></i> Analisis dengan AI
+                                </button>
+                                <button class="btn btn-secondary" onclick="addToWatchlist('${news.title}')">
+                                    <i class="fas fa-star"></i> Tambah ke Watchlist
+                                </button>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <i class="fas fa-share-alt" style="cursor: pointer; color: #666;"></i>
+                                <i class="fas fa-bookmark" style="cursor: pointer; color: #666;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const detailDiv = document.createElement('div');
+            detailDiv.innerHTML = detailHtml;
+            document.body.appendChild(detailDiv);
+        }
+
+        function closeDetail() {
+            const detailDiv = document.querySelector('[style*="position: fixed"]');
+            if (detailDiv) {
+                detailDiv.remove();
+            }
+        }
+
+        function analyzeWithAI(newsTitle) {
+            showNotification('Menganalisis berita dengan AI...', 'success');
+            // Switch to AI modal and analyze
+            document.getElementById('aiModal').classList.add('active');
+            switchTab('news');
+            document.getElementById('newsUrl').value = newsTitle;
+        }
+
+        function addToWatchlist(title) {
+            showNotification(`"${title}" ditambahkan ke watchlist!`, 'success');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function startNotificationSystem() {
+            // Simulate breaking news
+            setInterval(() => {
+                if (notificationSettings.breaking && Math.random() > 0.8) {
+                    const breakingNews = [
+                        "IHSG Menguat 2.1% - Aksi Beli Massif di Sektor Perbankan",
+                        "Bitcoin Tembus $50,000 - Sentimen Kripto Positif",
+                        "Bank Indonesia Turunkan Suku Bunga 25 bps",
+                        "TLKM Raup Keuntungan Rp15T di Kuartal III"
+                    ];
+                    
+                    const randomNews = breakingNews[Math.floor(Math.random() * breakingNews.length)];
+                    showBreakingNews(randomNews);
+                }
+            }, 45000); // Every 45 seconds
+
+            // Simulate regular news notifications
+            setInterval(() => {
+                if (notificationSettings.news && Math.random() > 0.7) {
+                    showNotification('Berita baru tersedia!', 'success');
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        function showBreakingNews(text) {
+            const breakingNews = document.getElementById('breakingNews');
+            const breakingText = document.getElementById('breakingText');
+            
+            breakingText.textContent = text;
+            breakingNews.classList.add('active');
+            
+            // Auto hide after 10 seconds
+            setTimeout(() => {
+                breakingNews.classList.remove('active');
+            }, 10000);
+        }
+
+        // Add fade-in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .loading {
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid var(--ai-purple);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
